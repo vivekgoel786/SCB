@@ -1,0 +1,502 @@
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "Categories: Index(['Poor', 'Normal', 'Good'], dtype='object')\nNumber of categories: 3\nNumber of thresholds: 2\n"
+        }
+      ],
+      "execution_count": 74
+    },
+    {
+      "id": "cd6b32af-0852-4270-bf88-fd6aea2efc4e",
+      "cell_type": "code",
+      "source": "import numpy as np\nfrom scipy.special import expit\n\n# Use categories from your original categorical variable\ncategories = df['Economy_State_dummy'].cat.categories\nn_categories = len(categories)\nn_thresholds = n_categories - 1\n\n# Split parameters accordingly\nbetas = res.params[:-n_thresholds]\ncutpoints = res.params[-n_thresholds:]\n\n# Calculate linear predictor (no intercept column)\neta = np.dot(X_scaled, betas)\n\n# Calculate cumulative probabilities\ncum_probs = [expit(cutpoint - eta) for cutpoint in cutpoints]\n\n# Compute probabilities per category\nprobs = pd.DataFrame({\n    categories[0]: cum_probs[0],\n    categories[1]: cum_probs[1] - cum_probs[0],\n    categories[2]: 1 - cum_probs[1]\n}, index=X_scaled.index)\n\nprint(probs.head())\nprint(probs.sum(axis=1).head())  # Should be 1 for each observation\n\n# Compare to model predictions\npredicted_probs = res.predict(exog=X_scaled)\nprint(predicted_probs.head())",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "       Poor    Normal      Good\n5  0.033827  0.658043  0.308130\n6  0.226333  0.723064  0.050603\n7  0.013761  0.458486  0.527754\n8  0.028076  0.621363  0.350562\n9  0.051911  0.726432  0.221656\n5    1.0\n6    1.0\n7    1.0\n8    1.0\n9    1.0\ndtype: float64\n          0         1         2\n5  0.033827  0.813424  0.152749\n6  0.226333  0.752546  0.021121\n7  0.013761  0.674756  0.311483\n8  0.028076  0.792594  0.179330\n9  0.051911  0.844722  0.103367\n"
+        }
+      ],
+      "execution_count": 81
+    },
+    {
+      "id": "040920b5-7226-4891-80f6-32436019cae3",
+      "cell_type": "code",
+      "source": "# Rename predicted probabilities columns to match manual probabilities\npredicted_probs.columns = probs.columns\n\n# Align indices\npredicted_probs = predicted_probs.reindex(probs.index)\n\n# Compute absolute differences\ndiff = (probs - predicted_probs).abs()\n\nprint(\"Max absolute difference per category:\")\nprint(diff.max())\n",
+      "metadata": {
+        "trusted": true,
+        "scrolled": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "Max absolute difference per category:\nPoor      0.000000\nNormal    0.221931\nGood      0.221931\ndtype: float64\n"
+        }
+      ],
+      "execution_count": 83
+    },
+    {
+      "id": "7dc534bf-8f78-485f-b337-be0f638ac66f",
+      "cell_type": "code",
+      "source": "print(res.params)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "UNEMP_RATE_lead2                    -1.370304\npct_change_GDP_lag1                  0.702952\npct_change_AVG_MONTHLY_WAGE_lead1    0.755720\nPoor/Normal                         -2.538543\nNormal/Good                          1.622408\ndtype: float64\n"
+        }
+      ],
+      "execution_count": 101
+    },
+    {
+      "id": "7ccc30c8-f907-449a-b334-236fc94f9d56",
+      "cell_type": "code",
+      "source": "print(res.model.exog_names)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "['UNEMP_RATE_lead2', 'pct_change_GDP_lag1', 'pct_change_AVG_MONTHLY_WAGE_lead1', 'Poor/Normal', 'Normal/Good']\n"
+        }
+      ],
+      "execution_count": 102
+    },
+    {
+      "id": "51697c95-2d91-4eae-b588-e2dde83f40fd",
+      "cell_type": "code",
+      "source": "print(res.model.data.param_names)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "['UNEMP_RATE_lead2', 'pct_change_GDP_lag1', 'pct_change_AVG_MONTHLY_WAGE_lead1', 'Poor/Normal', 'Normal/Good']\n"
+        }
+      ],
+      "execution_count": 103
+    },
+    {
+      "id": "367fe5f9-8179-4511-9366-9ef45c174a0b",
+      "cell_type": "code",
+      "source": "print(\"Thresholds candidates:\")\nprint(res.params[-(len(df['Economy_State_dummy'].cat.categories)-1):])\n",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "Thresholds candidates:\nPoor/Normal   -2.538543\nNormal/Good    1.622408\ndtype: float64\n"
+        }
+      ],
+      "execution_count": 104
+    },
+    {
+      "id": "9157d297-b757-494b-a694-c98125490bcf",
+      "cell_type": "code",
+      "source": "predicted_probs = res.predict(X_scaled, which='prob')\nprint(predicted_probs.head())",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "          0         1         2\n5  0.033827  0.813424  0.152749\n6  0.226333  0.752546  0.021121\n7  0.013761  0.674756  0.311483\n8  0.028076  0.792594  0.179330\n9  0.051911  0.844722  0.103367\n"
+        }
+      ],
+      "execution_count": 105
+    },
+    {
+      "id": "903baee8-0e4b-4574-824a-7d2635bc4cc6",
+      "cell_type": "code",
+      "source": "betas = res.params[:len(X_scaled.columns)]\neta = np.dot(X_scaled, betas)\n",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": 106
+    },
+    {
+      "id": "f054fdbf-b2c3-42c7-91db-2850caddcc3c",
+      "cell_type": "code",
+      "source": "from scipy.special import expit\n\ncutpoints = res.params[len(X_scaled.columns):]\n\ncumprobs = [expit(threshold - eta) for threshold in cutpoints]\n\n# Check if thresholds are sorted increasing:\nprint(\"Thresholds:\", cutpoints)\nprint(\"Are thresholds sorted?\", np.all(np.diff(cutpoints) > 0))\n\n# Compute category probabilities\np_poor = cumprobs[0]\np_normal = cumprobs[1] - cumprobs[0]\np_good = 1 - cumprobs[1]",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "Thresholds: Poor/Normal   -2.538543\nNormal/Good    1.622408\ndtype: float64\nAre thresholds sorted? True\n"
+        }
+      ],
+      "execution_count": 107
+    },
+    {
+      "id": "3cbb4a63-db29-428a-9712-fb6dbc3b1f19",
+      "cell_type": "code",
+      "source": "print(df['Economy_State_dummy'].cat.categories)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "Index(['Poor', 'Normal', 'Good'], dtype='object')\n"
+        }
+      ],
+      "execution_count": 109
+    },
+    {
+      "id": "c73cd043-1806-4bcf-bc9b-35c372e5919c",
+      "cell_type": "code",
+      "source": "sm.__version__",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "execution_count": 111,
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "'0.14.4'"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 111
+    },
+    {
+      "id": "09fea081-05c6-4225-b5c8-fe7c77cd6a01",
+      "cell_type": "code",
+      "source": "cutpoints = res.params[len(X_scaled.columns):].values  # numpy array",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": 112
+    },
+    {
+      "id": "a6581d38-6bcd-4031-9149-13bec02a2c7c",
+      "cell_type": "code",
+      "source": "cutpoints",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "execution_count": 113,
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "array([-2.538543  ,  1.62240805])"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 113
+    },
+    {
+      "id": "29fd14a6-fefb-4bdb-a1d5-a9998ee3554a",
+      "cell_type": "code",
+      "source": "thresholds = cutpoints.values  # numpy array\neta = np.dot(X_scaled.values, betas.values)\n\n# Calculate cumulative probabilities using model's logistic cdf\nfrom scipy.special import expit\n\n# Calculate cumulative probabilities for each threshold\ncum_probs_1 = expit(thresholds[0] - eta)\ncum_probs_2 = expit(thresholds[1] - eta)\n\np_poor = cum_probs_1\np_normal = cum_probs_2 - cum_probs_1\np_good = 1 - cum_probs_2\n\nmanual_probs = pd.DataFrame({'Poor': p_poor, 'Normal': p_normal, 'Good': p_good})\nprint(manual_probs.head())\nprint((manual_probs - predicted_probs.rename(columns={'Poor':'Poor', 'Normal':'Normal', 'Good':'Good'})).abs().max())",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "ename": "<class 'AttributeError'>",
+          "evalue": "'numpy.ndarray' object has no attribute 'values'",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
+            "Cell \u001b[0;32mIn[120], line 1\u001b[0m\n\u001b[0;32m----> 1\u001b[0m thresholds \u001b[38;5;241m=\u001b[39m \u001b[43mcutpoints\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mvalues\u001b[49m  \u001b[38;5;66;03m# numpy array\u001b[39;00m\n\u001b[1;32m      2\u001b[0m eta \u001b[38;5;241m=\u001b[39m np\u001b[38;5;241m.\u001b[39mdot(X_scaled\u001b[38;5;241m.\u001b[39mvalues, betas\u001b[38;5;241m.\u001b[39mvalues)\n\u001b[1;32m      4\u001b[0m \u001b[38;5;66;03m# Calculate cumulative probabilities using model's logistic cdf\u001b[39;00m\n",
+            "\u001b[0;31mAttributeError\u001b[0m: 'numpy.ndarray' object has no attribute 'values'"
+          ],
+          "output_type": "error"
+        }
+      ],
+      "execution_count": 120
+    },
+    {
+      "id": "d5a26004-79da-4156-907d-037ceeab188a",
+      "cell_type": "code",
+      "source": "manual_pred = res.model.predict(res.params, exog=X_scaled)\nmanual_pred",
+      "metadata": {
+        "trusted": true,
+        "scrolled": true
+      },
+      "outputs": [
+        {
+          "execution_count": 118,
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "array([[3.38273621e-02, 8.13423584e-01, 1.52749054e-01],\n       [2.26333215e-01, 7.52545782e-01, 2.11210028e-02],\n       [1.37607389e-02, 6.74755907e-01, 3.11483354e-01],\n       [2.80755242e-02, 7.92594436e-01, 1.79330040e-01],\n       [5.19112873e-02, 8.44721745e-01, 1.03366968e-01],\n       [5.47606117e-01, 4.47206248e-01, 5.18763572e-03],\n       [8.01512155e-01, 1.96927123e-01, 1.56072118e-03],\n       [3.68964187e-01, 6.20355443e-01, 1.06803696e-02],\n       [2.83639877e-01, 7.00668240e-01, 1.56918824e-02],\n       [3.32237936e-01, 6.55234194e-01, 1.25278699e-02],\n       [2.50981753e-01, 7.30528751e-01, 1.84894956e-02],\n       [1.44479320e-02, 6.84569301e-01, 3.00982767e-01],\n       [5.08187527e-03, 4.42188160e-01, 5.52729964e-01],\n       [4.08081179e-03, 3.89544856e-01, 6.06374332e-01],\n       [4.63867046e-03, 4.20086650e-01, 5.75274680e-01],\n       [1.15758056e-02, 6.38205556e-01, 3.50218638e-01],\n       [5.27807648e-03, 4.51423534e-01, 5.43298390e-01],\n       [1.28978865e-02, 6.61372380e-01, 3.25729733e-01],\n       [7.67969944e-03, 5.43096544e-01, 4.49223757e-01],\n       [3.92882332e-03, 3.80638736e-01, 6.15432440e-01],\n       [3.55220590e-03, 3.57372041e-01, 6.39075754e-01],\n       [4.44622447e-03, 4.09913611e-01, 5.85640165e-01],\n       [4.70097523e-03, 4.23302847e-01, 5.71996178e-01],\n       [1.90487631e-03, 2.30254434e-01, 7.67840689e-01],\n       [4.00808448e-03, 3.85316389e-01, 6.10675526e-01],\n       [2.04207477e-02, 7.47160092e-01, 2.32419160e-01],\n       [2.31466617e-02, 7.66498371e-01, 2.10354968e-01],\n       [1.48241223e-02, 6.89652794e-01, 2.95523084e-01],\n       [1.06778289e-02, 6.20301990e-01, 3.69020181e-01],\n       [1.77541332e-02, 7.23414180e-01, 2.58831687e-01],\n       [4.67405509e-02, 8.39206872e-01, 1.14052577e-01],\n       [7.13253688e-02, 8.52729946e-01, 7.59446856e-02],\n       [3.76988804e-02, 8.23534982e-01, 1.38766137e-01],\n       [7.06202482e-02, 8.52681170e-01, 7.66985816e-02],\n       [8.51546168e-02, 8.51338068e-01, 6.35073154e-02],\n       [5.10715425e-02, 8.43956996e-01, 1.04971461e-01],\n       [6.25297160e-02, 8.51016967e-01, 8.64533174e-02],\n       [1.29841155e-01, 8.29573219e-01, 4.05856263e-02],\n       [1.94392379e-01, 7.80115295e-01, 2.54923257e-02],\n       [1.59199755e-01, 8.08538475e-01, 3.22617703e-02],\n       [1.12613920e-01, 8.40003478e-01, 4.73826020e-02],\n       [1.54150128e-01, 8.12373250e-01, 3.34766217e-02],\n       [5.88040555e-02, 8.49435973e-01, 9.17599716e-02],\n       [5.54919163e-02, 8.47493594e-01, 9.70144894e-02],\n       [3.93349682e-02, 8.27095672e-01, 1.33569360e-01],\n       [4.69296682e-02, 8.39445116e-01, 1.13625216e-01],\n       [6.21752973e-02, 8.50891403e-01, 8.69332998e-02],\n       [4.85170989e-02, 8.41328764e-01, 1.10154137e-01],\n       [7.36438469e-02, 8.52796629e-01, 7.35595237e-02],\n       [9.98506616e-02, 8.46308985e-01, 5.38403537e-02],\n       [6.55993770e-01, 3.40707010e-01, 3.29921983e-03],\n       [7.27474762e-01, 2.70166157e-01, 2.35908133e-03],\n       [7.73907086e-01, 2.24252236e-01, 1.84067816e-03],\n       [9.65433441e-01, 3.43406075e-02, 2.25951660e-04],\n       [8.94725765e-01, 1.04532089e-01, 7.42146399e-04],\n       [9.52572830e-01, 4.71129944e-02, 3.14175575e-04],\n       [6.52139284e-01, 3.44505001e-01, 3.35571499e-03],\n       [1.47114515e-01, 8.17582926e-01, 3.53025592e-02],\n       [2.89058110e-01, 6.95654328e-01, 1.52875620e-02],\n       [1.47179647e-01, 8.17535465e-01, 3.52848882e-02],\n       [1.10942996e-01, 8.40908924e-01, 4.81480798e-02],\n       [7.20199033e-02, 8.52764727e-01, 7.52153696e-02],\n       [8.23981367e-02, 8.51924794e-01, 6.56770696e-02],\n       [9.14304044e-02, 8.49545937e-01, 5.90236587e-02],\n       [4.36025867e-02, 8.34781486e-01, 1.21615927e-01],\n       [1.22064004e-01, 8.34507715e-01, 4.34282817e-02]])"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 118
+    },
+    {
+      "id": "0a33ad18-aee7-4612-a14c-c6b5b6b5f336",
+      "cell_type": "code",
+      "source": "print(res.predict(X_scaled, which='prob').head())",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "          0         1         2\n5  0.033827  0.813424  0.152749\n6  0.226333  0.752546  0.021121\n7  0.013761  0.674756  0.311483\n8  0.028076  0.792594  0.179330\n9  0.051911  0.844722  0.103367\n"
+        }
+      ],
+      "execution_count": 119
+    },
+    {
+      "id": "7e0d7fd5-3fa5-45e1-94cd-ce5d56929eb0",
+      "cell_type": "markdown",
+      "source": "# Forecasting",
+      "metadata": {}
+    },
+    {
+      "id": "b1e5221c-d587-4877-a356-769283fb8647",
+      "cell_type": "code",
+      "source": "future_df = pd.DataFrame({\n    'Date': ['Sep-22', 'Dec-22', 'Mar-23','Jun-23','Sep-23','Dec-23','Mar-24','Jun-24','Sep-24','Dec-24','Mar-25'],  \n    'GDP': [2548065,2776940,2851124,2634713,2588398,2828147,2899023,2694894,2664915,2920669,2989920], \n    'UNEMP_RATE': [1.23,1.15,1.05,1.06,0.99,0.81,1.01,1.07,1.02,0.88,0.8924],\n    'AVG_MONTHLY_WAGE': [15273.445,15451.55,15144.3533333333,15412.1233333333,15454.66,15392.3133333333,15029.3733333333,15310.42,15671.26,15701.8866666667,15524.92]\n})",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": 70
+    },
+    {
+      "id": "6809d576-5bd5-4b6e-a8fd-dfe2f50cde60",
+      "cell_type": "code",
+      "source": "future_df",
+      "metadata": {
+        "trusted": true,
+        "scrolled": true
+      },
+      "outputs": [
+        {
+          "execution_count": 71,
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "      Date      GDP  UNEMP_RATE  AVG_MONTHLY_WAGE\n0   Sep-22  2548065      1.2300      15273.445000\n1   Dec-22  2776940      1.1500      15451.550000\n2   Mar-23  2851124      1.0500      15144.353333\n3   Jun-23  2634713      1.0600      15412.123333\n4   Sep-23  2588398      0.9900      15454.660000\n5   Dec-23  2828147      0.8100      15392.313333\n6   Mar-24  2899023      1.0100      15029.373333\n7   Jun-24  2694894      1.0700      15310.420000\n8   Sep-24  2664915      1.0200      15671.260000\n9   Dec-24  2920669      0.8800      15701.886667\n10  Mar-25  2989920      0.8924      15524.920000",
+            "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>Date</th>\n      <th>GDP</th>\n      <th>UNEMP_RATE</th>\n      <th>AVG_MONTHLY_WAGE</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Sep-22</td>\n      <td>2548065</td>\n      <td>1.2300</td>\n      <td>15273.445000</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Dec-22</td>\n      <td>2776940</td>\n      <td>1.1500</td>\n      <td>15451.550000</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Mar-23</td>\n      <td>2851124</td>\n      <td>1.0500</td>\n      <td>15144.353333</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Jun-23</td>\n      <td>2634713</td>\n      <td>1.0600</td>\n      <td>15412.123333</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Sep-23</td>\n      <td>2588398</td>\n      <td>0.9900</td>\n      <td>15454.660000</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>Dec-23</td>\n      <td>2828147</td>\n      <td>0.8100</td>\n      <td>15392.313333</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>Mar-24</td>\n      <td>2899023</td>\n      <td>1.0100</td>\n      <td>15029.373333</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>Jun-24</td>\n      <td>2694894</td>\n      <td>1.0700</td>\n      <td>15310.420000</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>Sep-24</td>\n      <td>2664915</td>\n      <td>1.0200</td>\n      <td>15671.260000</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>Dec-24</td>\n      <td>2920669</td>\n      <td>0.8800</td>\n      <td>15701.886667</td>\n    </tr>\n    <tr>\n      <th>10</th>\n      <td>Mar-25</td>\n      <td>2989920</td>\n      <td>0.8924</td>\n      <td>15524.920000</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 71
+    },
+    {
+      "id": "c4318dfc-e26a-4cd1-ae4b-7fdebb74a301",
+      "cell_type": "code",
+      "source": "future_df['pct_change_GDP_lag1'] = future_df['GDP'].pct_change(periods=4).shift(1)\nfuture_df['pct_change_AVG_MONTHLY_WAGE_lead1'] = future_df['AVG_MONTHLY_WAGE'].pct_change(periods=4).shift(-1)\nfuture_df['UNEMP_RATE_lead2'] = future_df['UNEMP_RATE'].shift(-2)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": 72
+    },
+    {
+      "id": "6d9adcb1-faef-4dfa-88cf-9ceea92d582e",
+      "cell_type": "code",
+      "source": "print(\"Means used for scaling:\")\nprint(scaler.mean_)\n\nprint(\"\\nStandard deviations used for scaling:\")\nprint(scaler.scale_)\n\nprint(\"\\n\")\nfor feature, mean, std in zip(X.columns, scaler.mean_, scaler.scale_):\n    print(f\"{feature}: mean={mean:.4f}, std={std:.4f}\")",
+      "metadata": {
+        "trusted": true,
+        "scrolled": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "Means used for scaling:\n[1.11242424 0.02577087 0.04152073]\n\nStandard deviations used for scaling:\n[0.39485348 0.03910422 0.0428986 ]\n\n\nUNEMP_RATE_lead2: mean=1.1124, std=0.3949\npct_change_GDP_lag1: mean=0.0258, std=0.0391\npct_change_AVG_MONTHLY_WAGE_lead1: mean=0.0415, std=0.0429\n"
+        }
+      ],
+      "execution_count": 102
+    },
+    {
+      "id": "7b329377-2721-42fa-b58b-635c8c45c35c",
+      "cell_type": "code",
+      "source": "X_future = future_df[['UNEMP_RATE_lead2','pct_change_GDP_lag1','pct_change_AVG_MONTHLY_WAGE_lead1']].dropna()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": 75
+    },
+    {
+      "id": "1bc77506-74b0-4ca7-8a14-7ba950356532",
+      "cell_type": "code",
+      "source": "# Standardize the predictors using the same scaler you fitted earlier\nX_future_scaled = pd.DataFrame(scaler.transform(X_future), columns=X_future.columns, index=X_future.index)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": 77
+    },
+    {
+      "id": "2ac756c1-7562-4328-9cce-2bd3de432333",
+      "cell_type": "code",
+      "source": "# Predict probabilities\n#predicted_probs_future = res.predict(X_future_scaled) \npredicted_probs_future = res.model.predict(res.params, exog=X_future_scaled)",
+      "metadata": {
+        "trusted": true,
+        "scrolled": true
+      },
+      "outputs": [
+        {
+          "execution_count": 80,
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "array([[0.16221267, 0.80621574, 0.03157159],\n       [0.13241003, 0.8278733 , 0.03971668],\n       [0.06301242, 0.85118009, 0.08580749],\n       [0.05353909, 0.84607603, 0.10038487]])"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 80
+    },
+    {
+      "id": "f2aec8c8-857c-499c-9e02-cd2111379a35",
+      "cell_type": "code",
+      "source": "# Convert to DataFrame with categories\n# The categories are in your original y variable:\ncategories = y.cat.categories.tolist()  # ['Poor', 'Normal', 'Good']\npredicted_probs_future_df = pd.DataFrame(predicted_probs_future, columns=categories, index=X_future_scaled.index) #X_future\npredicted_probs_future_df",
+      "metadata": {
+        "trusted": true,
+        "scrolled": true
+      },
+      "outputs": [
+        {
+          "execution_count": 81,
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "       Poor    Normal      Good\n5  0.162213  0.806216  0.031572\n6  0.132410  0.827873  0.039717\n7  0.063012  0.851180  0.085807\n8  0.053539  0.846076  0.100385",
+            "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>Poor</th>\n      <th>Normal</th>\n      <th>Good</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>5</th>\n      <td>0.162213</td>\n      <td>0.806216</td>\n      <td>0.031572</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>0.132410</td>\n      <td>0.827873</td>\n      <td>0.039717</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>0.063012</td>\n      <td>0.851180</td>\n      <td>0.085807</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>0.053539</td>\n      <td>0.846076</td>\n      <td>0.100385</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 81
+    },
+    {
+      "id": "3d36a00a-77bc-46cb-95b9-8dd239a49f26",
+      "cell_type": "code",
+      "source": "# Get predicted categories\npredicted_categories_future = predicted_probs_future_df.idxmax(axis=1)\npredicted_categories_future",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "execution_count": 83,
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "5    Normal\n6    Normal\n7    Normal\n8    Normal\ndtype: object"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 83
+    },
+    {
+      "id": "985ffdd5-721c-4814-8354-eea4587ced07",
+      "cell_type": "code",
+      "source": "# Add predictions to future_df\nfuture_df['Predicted_Economy_State'] = predicted_categories_future",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": 85
+    },
+    {
+      "id": "7fd10c5f-468a-4173-9ab8-cd537d4c0445",
+      "cell_type": "code",
+      "source": "# Optional: make sure it’s categorical with correct order\nfuture_df['Predicted_Economy_State'] = pd.Categorical(\n    future_df['Predicted_Economy_State'],\n    categories=categories,\n    ordered=True\n)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": 87
+    },
+    {
+      "id": "cd499169-4a63-46df-af4b-4abc30ca17cf",
+      "cell_type": "code",
+      "source": "# Add scaled predictor variables as new columns\nfor col in X_future_scaled.columns:\n    future_df[f\"{col}_scaled\"] = X_future_scaled[col]\n\nprint(future_df)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": "      Date      GDP  UNEMP_RATE  AVG_MONTHLY_WAGE  pct_change_GDP_lag1  \\\n0   Sep-22  2548065      1.2300      15273.445000                  NaN   \n1   Dec-22  2776940      1.1500      15451.550000                  NaN   \n2   Mar-23  2851124      1.0500      15144.353333                  NaN   \n3   Jun-23  2634713      1.0600      15412.123333                  NaN   \n4   Sep-23  2588398      0.9900      15454.660000                  NaN   \n5   Dec-23  2828147      0.8100      15392.313333             0.015829   \n6   Mar-24  2899023      1.0100      15029.373333             0.018440   \n7   Jun-24  2694894      1.0700      15310.420000             0.016800   \n8   Sep-24  2664915      1.0200      15671.260000             0.022842   \n9   Dec-24  2920669      0.8800      15701.886667             0.029562   \n10  Mar-25  2989920      0.8924      15524.920000             0.032715   \n\n    pct_change_AVG_MONTHLY_WAGE_lead1  UNEMP_RATE_lead2  \\\n0                                 NaN            1.0500   \n1                                 NaN            1.0600   \n2                                 NaN            0.9900   \n3                            0.011865            0.8100   \n4                           -0.003834            1.0100   \n5                           -0.007592            1.0700   \n6                           -0.006599            1.0200   \n7                            0.014015            0.8800   \n8                            0.020112            0.8924   \n9                            0.032972               NaN   \n10                                NaN               NaN   \n\n   Predicted_Economy_State  UNEMP_RATE_lead2_scaled  \\\n0                      NaN                      NaN   \n1                      NaN                      NaN   \n2                      NaN                      NaN   \n3                      NaN                      NaN   \n4                      NaN                      NaN   \n5                   Normal                -0.107443   \n6                   Normal                -0.234072   \n7                   Normal                -0.588634   \n8                   Normal                -0.557230   \n9                      NaN                      NaN   \n10                     NaN                      NaN   \n\n    pct_change_GDP_lag1_scaled  pct_change_AVG_MONTHLY_WAGE_lead1_scaled  \n0                          NaN                                       NaN  \n1                          NaN                                       NaN  \n2                          NaN                                       NaN  \n3                          NaN                                       NaN  \n4                          NaN                                       NaN  \n5                    -0.254244                                 -1.144862  \n6                    -0.187468                                 -1.121707  \n7                    -0.229408                                 -0.641176  \n8                    -0.074910                                 -0.499050  \n9                          NaN                                       NaN  \n10                         NaN                                       NaN  \n"
+        }
+      ],
+      "execution_count": 92
+    },
+    {
+      "id": "f97a4b7b-9f45-470f-945a-1b4aec286cb8",
+      "cell_type": "code",
+      "source": "# Convert DataFrame to CSV string\ncsv_data = future_df.to_csv(index=False)\n\n# Create a download link for the CSV file\nfrom IPython.display import HTML\n\ndef create_download_link(data, filename=\"data.csv\"):\n    # Data has to be URI encoded for the href\n    import urllib\n    csv_uri = \"data:text/csv;charset=utf-8,\" + urllib.parse.quote(data)\n    return HTML(f'<a download=\"{filename}\" href=\"{csv_uri}\">Download CSV file</a>')\n\ncreate_download_link(csv_data)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "execution_count": 123,
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "<IPython.core.display.HTML object>",
+            "text/html": "<a download=\"data.csv\" href=\"data:text/csv;charset=utf-8,Date%2CGDP%2CUNEMP_RATE%2CAVG_MONTHLY_WAGE%2Cpct_change_GDP_lag1%2Cpct_change_AVG_MONTHLY_WAGE_lead1%2CUNEMP_RATE_lead2%2CPredicted_Economy_State%2Cpct_change_GDP%2Cpct_change_AVG_MONTHLY_WAGE%2CUNEMP_RATE_lead2_scaled%2Cpct_change_GDP_lag1_scaled%2Cpct_change_AVG_MONTHLY_WAGE_lead1_scaled%0ASep-22%2C2548065%2C1.23%2C15273.445%2C%2C%2C1.05%2C%2C%2C%2C%2C%2C%0ADec-22%2C2776940%2C1.15%2C15451.55%2C%2C%2C1.06%2C%2C%2C%2C%2C%2C%0AMar-23%2C2851124%2C1.05%2C15144.3533333333%2C%2C%2C0.99%2C%2C%2C%2C%2C%2C%0AJun-23%2C2634713%2C1.06%2C15412.1233333333%2C%2C0.011864710286382696%2C0.81%2C%2C%2C%2C%2C%2C%0ASep-23%2C2588398%2C0.99%2C15454.66%2C%2C-0.0038337038463259754%2C1.01%2C%2C0.015828874067184362%2C0.011864710286382696%2C%2C%2C%0ADec-23%2C2828147%2C0.81%2C15392.3133333333%2C0.015828874067184362%2C-0.007592268713575545%2C1.07%2CNormal%2C0.018440081528589003%2C-0.0038337038463259754%2C-0.006139599919329903%2C1.0183804396725058%2C0.1180913952992124%0AMar-24%2C2899023%2C1.01%2C15029.3733333333%2C0.018440081528589003%2C-0.006598917691849504%2C1.02%2CNormal%2C0.016800040966299612%2C-0.007592268713575545%2C1.3614562821113967%2C0.6820355786931807%2C0.10157218024516151%0AJun-24%2C2694894%2C1.07%2C15310.42%2C0.016800040966299612%2C0.014015190240354691%2C0.88%2CNormal%2C0.022841577052225448%2C-0.006598917691849504%2C0.7029841907632688%2C0.7381159798902612%2C2.881990984623661%0ASep-24%2C2664915%2C1.02%2C15671.26%2C0.022841577052225448%2C0.02011220319060114%2C0.8924%2CNormal%2C0.02956152801848866%2C0.014015190240354691%2C0.17114134775131948%2C0.4942521051124187%2C1.181544907820934%0ADec-24%2C2920669%2C0.88%2C15701.8866666667%2C0.02956152801848866%2C0.03297187817988645%2C%2C%2C0.03271470683808153%2C0.02011220319060114%2C0.5510290927598551%2C0.19146904674319457%2C1.3058440040575923%0AMar-25%2C2989920%2C0.8924%2C15524.92%2C0.03271470683808153%2C%2C%2C%2C0.031354356277959905%2C0.03297187817988645%2C2.4504678178025316%2C0.2422309951720914%2C0.6061264843373%0A\">Download CSV file</a>"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 123
+    },
+    {
+      "id": "149a5eb3-9ba8-40e0-9211-3dd3e69713c6",
+      "cell_type": "code",
+      "source": "# Convert DataFrame to CSV string\ncsv_data = X_future_scaled.to_csv(index=False)\n\n# Create a download link for the CSV file\nfrom IPython.display import HTML\n\ndef create_download_link(data, filename=\"data.csv\"):\n    # Data has to be URI encoded for the href\n    import urllib\n    csv_uri = \"data:text/csv;charset=utf-8,\" + urllib.parse.quote(data)\n    return HTML(f'<a download=\"{filename}\" href=\"{csv_uri}\">Download CSV file</a>')\n\ncreate_download_link(csv_data)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "execution_count": 93,
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "<IPython.core.display.HTML object>",
+            "text/html": "<a download=\"data.csv\" href=\"data:text/csv;charset=utf-8,UNEMP_RATE_lead2%2Cpct_change_GDP_lag1%2Cpct_change_AVG_MONTHLY_WAGE_lead1%0A-0.10744299858827273%2C-0.2542436380734827%2C-1.1448624669420724%0A-0.23407224692445128%2C-0.18746805024792126%2C-1.1217066767777994%0A-0.588634142265751%2C-0.2294082921564395%2C-0.641175678911228%0A-0.5572300886783788%2C-0.07490998841383885%2C-0.4990495327484693%0A\">Download CSV file</a>"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 93
+    },
+    {
+      "id": "8c1a0499-ea86-4640-a96c-4a39358c0462",
+      "cell_type": "code",
+      "source": "",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    }
+  ]
+}
