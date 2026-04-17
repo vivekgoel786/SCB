@@ -1,0 +1,61 @@
+import pandas as pd
+import math
+
+#read file
+file = "abc.xlsx"
+xl = pd.read_excel(file, sheet_name=None)
+pd.set_option('display.max_rows', None)
+
+# Enter Parameters
+inp_confidence_level = 0.999	# Confidence level (99.9%)
+inp_time_horizon = 30	# Time horizon (30 days)
+rows = []
+
+# Create an empty DataFrame to store the results
+var_df = pd.DataFrame(columns = ['Stock', 'Confidence Level', 'Horizon', 'VaR'])
+
+
+# Function to calculate Value at Risk (VaR)
+def calculate_var(prices, confidence_level, time_horizon):
+    # Check if prices are in a pandas Series format, and convert if not
+    if not isinstance(prices, pd.Series):
+        prices = pd.Series(prices)
+    
+    # Calculate rolling returns based on the specified time horizon
+    rolling_returns = prices.pct_change(axis=0, periods=time_horizon).dropna()
+    
+    # Sort the returns in ascending order
+    sorted_returns = rolling_returns.sort_values()
+    
+    # Calculate the cutoff point based on the confidence level
+    cutoff_point = math.ceil(len(prices)*(1 - confidence_level))
+    
+    # Calculate the VaR as the return at the cutoff point
+    calculated_var = sorted_returns.iloc[cutoff_point - 1]
+    
+    return calculated_var
+
+# Loop through each sheet in the Excel file
+for sheet in xl.keys():
+	df = xl[sheet]
+	df = df.sort_values(by=['Date']) # Sort the data by the Date column
+	df = df[df.Date<='2024-11-13'] # Filter data up to November 13, 2024
+	df.fillna(method='ffill', inplace=True) # Fill missing values with forward fill
+	
+	# Extract the last price (PX_LAST)
+	price = df["PX_LAST"]
+	
+	# Calculate VaR for the stock
+	var = calculate_var(prices=price, confidence_level=inp_confidence_level, time_horizon=inp_time_horizon)
+	
+	# Append the result to the rows list
+	rows.append({'Stock':sheet, 'Confidence Level': inp_confidence_level, 'Horizon': inp_time_horizon, 'VaR': var})
+
+# Convert the rows list to a DataFrame	
+rows_df = pd.DataFrame(rows)
+
+# Concatenate the new results with the previous ones
+var_df = pd.concat([var_df, rows_df], ignore_index=True)
+
+# Display the final result
+var_df
