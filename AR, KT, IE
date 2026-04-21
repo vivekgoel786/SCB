@@ -1,0 +1,313 @@
+import pandas as pd
+
+def get_dataset_info(df):
+    # Initialize an empty list to store the information
+    info_list = []
+    
+    # Loop through each column in the DataFrame
+    for column in df.columns:
+        # Get the number of observations
+        total_obs = df[column].shape[0]
+        
+        # Get the count of missing values
+        missing_count = df[column].isnull().sum()
+        
+        # Calculate the missing percentage
+        missing_percentage = (missing_count / total_obs) * 100
+        
+        # Get the number of unique values
+        unique_values = df[column].nunique()
+        
+        # Get the data type of the variable
+        data_type = df[column].dtype
+        
+        # Append the collected info to the list
+        info_list.append({
+            'Variable': column,
+            'Total Observations': total_obs,
+            'Missing Count': missing_count,
+            'Missing Percentage': missing_percentage,
+            'Unique Values': unique_values,
+            'Data Type': data_type
+        })
+    
+    # Create a DataFrame from the info list
+    INFO = pd.DataFrame(info_list)
+    
+    return INFO
+
+# Example usage
+# df = pd.read_csv('your_dataset.csv')  # Load your dataset here
+# dataset_info = get_dataset_info(df)
+# print(dataset_info)
+
+dataset_info = get_dataset_info(data)
+print(dataset_info)
+
+
+
+
+
+
+
+bins = [0, 30, 36, 40]
+labels = ['0-30', '30-36','36-40']
+data2['Personality_Risk_Score'] = pd.cut(data2['Perosnality_Suitability_Test_Score'], bins=bins, labels=labels, right=False)
+
+bins = [0, 25, 50, 75, 4000]
+labels = ['0-25', '25-50','50-75', 'Above 75']
+data2['Otstnd_Loan_Amt_factor'] = pd.cut(data2['Otstnd_Loan_Amt_PBL_LBL_withSCB'], bins=bins, labels=labels, right=False)
+
+data2['LBL_PBL_Relation_out_SCB_years_factor'] = data2['LBL_PBL_Relation_out_SCB_years'].apply(
+    lambda x: "Less than 1 year" if x == "A. less than 1 year" else "More than 1 year"
+)
+
+data2['Length_of_Credit_Relation_SCB_factor'] = data2['Length_of_Credit_Relation_SCB_years'].apply(
+    lambda x: "Less than 3 years" if x in ["A. less than 1 year", "B. 1 to 3 years"] else 
+              "3 to 7 years" if x in ["C. 3 to 5 years", "D. 5 to 7 years"] else 
+              "More than 7 years"
+)
+
+bins = [30, 41, 50, 60, 80]
+labels = ['30-41', '41-50','50-60', '60-80']
+data2['Age_factor'] = pd.cut(data2['Age'], bins=bins, labels=labels, right=False)
+
+bins = [0, 110, 130, 255, 30001]
+labels = ['0-110', '110-130','130-255', 'Above 255']
+data2['NetWorth_factor'] = pd.cut(data2['NetWorth'], bins=bins, labels=labels, right=False)
+
+
+
+###Kendal Tau correlation
+from scipy.stats import kendalltau
+# Extract the relevant columns
+x = data2['Otstnd_Loan_Amt_factor']
+y = data2['BU_numbering_granular']
+# Calculate Kendall Tau correlation
+tau, p_value = kendalltau(x, y)
+tau, p_value
+
+data2['Otstnd_Loan_Amt_factor'].unique()
+
+data3 = data2.copy()
+# Convert categorical to ordinal
+ordinal_mapping = {'Above 75': 1, '50-75': 2, '25-50': 3, '0-25': 4}
+data3['ordinal'] = data3['Otstnd_Loan_Amt_factor'].map(ordinal_mapping)
+
+# Calculate Kendall's Tau
+tau, p_value = kendalltau(data3['ordinal'], data3['BU_numbering_granular'])
+
+print(f"Kendall's Tau: {tau:.4f}")
+print(f"P-value: {p_value:.4f}")
+
+
+####Information Entropy
+# Calculate probabilities
+probabilities = data2['Otstnd_Loan_Amt_factor'].value_counts(normalize=True)
+
+# Calculate entropy
+entropy = -np.sum(probabilities * np.log2(probabilities))
+print(f'Entropy: {entropy}')
+
+
+
+###Accuracy Ratio - Gini Coeff
+import pandas as pd
+import statsmodels.formula.api as smf
+import statsmodels.api as sm
+from sklearn.linear_model import  LogisticRegression
+from sklearn.metrics import confusion_matrix, roc_auc_score, roc_curve
+from pyspark.sql import functions as F
+from pyspark.sql.window import Window
+
+unique_values = df.select('AUM_excld_loan_proceed_factor').distinct()
+display(unique_values)
+
+'''
+Change the Custom Order in the below code according to the order of riskiness of the bucket, where 1 is the riskiest and 4 is the safest. Need to fill the values present in the variable we are calculating for.
+'''
+
+
+
+def calculate_accuracy_ratio(df, dependent_column, independent_column):
+    # Total count and total sum of Bads for percentage calculations
+    total_count = df.count()
+    total_bads = df.agg(F.sum(dependent_column)).first()[0]
+
+    # Create summary table
+    summary_table = df.groupBy(independent_column).agg(
+        F.count('*').alias('#Obs'),
+        F.sum(dependent_column).alias('#Bads')
+    )
+
+    # Calculate Default Rate
+    summary_table = summary_table.withColumn(
+        'Default_Rate',
+        F.when(F.col('#Obs') > 0, summary_table['#Bads'] / summary_table['#Obs']).otherwise(0)
+    )
+
+    # Calculate percentages
+    summary_table = summary_table.withColumn(
+        'Perc_Bads',
+        summary_table['#Bads'] / total_bads
+    ).withColumn(
+        'Perc_Obs',
+        summary_table['#Obs'] / total_count
+    )
+
+    # Change the order of rows based on utilization
+    custom_order = F.when(summary_table[independent_column] == 'Above 100', 4) \
+                    .when(summary_table[independent_column] == '70-100', 3) \
+                    .when(summary_table[independent_column] == '40-70', 2) \
+                    .otherwise(1)
+
+    summary_table = summary_table.withColumn('Rank', custom_order) \
+                                   .orderBy('Rank')
+
+    # Reorder columns
+    summary_table = summary_table.select('Rank', independent_column, '#Obs', '#Bads', 'Default_Rate', 'Perc_Bads', 'Perc_Obs')
+    
+    # Define a window specification for cumulative sums
+    window_spec = Window.orderBy('Rank')
+
+    # Calculate cumulative sums
+    summary_table = summary_table.withColumn('Cum_Perc_Obs', F.sum('Perc_Obs').over(window_spec)) \
+                                   .withColumn('Cum_Perc_Bads', F.sum('Perc_Bads').over(window_spec)) 
+
+    # Add lagged values for Cum_Perc_Bads and Cum_Perc_Obs
+    summary_table = summary_table.withColumn('Prev_Cum_Perc_Obs', F.lag('Cum_Perc_Obs').over(window_spec)) \
+                                   .withColumn('Prev_Cum_Perc_Bads', F.lag('Cum_Perc_Bads').over(window_spec)) 
+
+    # Replace null values in the first row with 0 for lagged columns
+    summary_table = summary_table.withColumn(
+        'Prev_Cum_Perc_Bads',
+        F.when(F.col('Prev_Cum_Perc_Bads').isNull(), 0).otherwise(F.col('Prev_Cum_Perc_Bads'))
+    ).withColumn(
+        'Prev_Cum_Perc_Obs',
+        F.when(F.col('Prev_Cum_Perc_Obs').isNull(), 0).otherwise(F.col('Prev_Cum_Perc_Obs'))
+    )
+
+    # Calculate CAP using the trapezoidal formula
+    summary_table = summary_table.withColumn(
+        'CAP',
+        (summary_table['Cum_Perc_Obs'] - summary_table['Prev_Cum_Perc_Obs']) * \
+        (summary_table['Cum_Perc_Bads'] + summary_table['Prev_Cum_Perc_Bads']) * 0.5
+    )
+
+    # Calculate Numerator
+    Numerator = summary_table.agg(F.sum('CAP')).first()[0] - 0.5
+
+    # Calculate Denominator 
+    Denominator = 0.5 * (1 - (total_bads / total_count)) 
+
+    # Calculate Accuracy Ratio
+    AR = Numerator / Denominator if Denominator != 0 else None
+
+    # Show the results for total bads and total observations
+    print(f"Total Bads: {total_bads}, Total Obs: {total_count}")
+    print(f"Numerator: {Numerator}, Denominator: {Denominator}")
+    print(f"Accuracy Ratio: {AR}")
+    
+    return summary_table
+
+# Call the function
+summary_table = calculate_accuracy_ratio(df, 'D2_E_Bad', 'AUM_excld_loan_proceed_factor')
+
+# Show the summary table
+summary_table.display()
+
+
+data2['Credit_Utilization'].unique()
+unique_values = df.select('Credit_Utilization').distinct()
+display(unique_values)
+
+'''
+Change the Custom Order in the below code according to the order of riskiness of the bucket, where 1 is the riskiest and 4 is the safest. Need to fill the values present in the variable we are calculating for.
+'''
+
+
+def calculate_accuracy_ratio(df, dependent_column, independent_column):
+    # Total count and total sum of Bads for percentage calculations
+    total_count = df.count()
+    total_bads = df.agg(F.sum(dependent_column)).first()[0]
+
+    # Create summary table
+    summary_table = df.groupBy(independent_column).agg(
+        F.count('*').alias('#Obs'),
+        F.sum(dependent_column).alias('#Bads')
+    )
+
+    # Calculate Default Rate
+    summary_table = summary_table.withColumn(
+        'Default_Rate',
+        F.when(F.col('#Obs') > 0, summary_table['#Bads'] / summary_table['#Obs']).otherwise(0)
+    )
+
+    # Calculate percentages
+    summary_table = summary_table.withColumn(
+        'Perc_Bads',
+        summary_table['#Bads'] / total_bads
+    ).withColumn(
+        'Perc_Obs',
+        summary_table['#Obs'] / total_count
+    )
+
+    # Change the order of rows based on riskiness of the bucket, where 1 is the riskiest and 4 is the safest
+    custom_order = F.when(summary_table[independent_column] == 'A. Low credit utilization upto 20%', 4) \
+                    .when(summary_table[independent_column] == 'B. Moderate credit utilization from 20% to 50% ', 3) \
+                    .when(summary_table[independent_column] == 'C. High credit utilization from 50% to 75%', 2) \
+                    .otherwise(1)
+
+    summary_table = summary_table.withColumn('Rank', custom_order) \
+                                   .orderBy('Rank')
+
+    # Reorder columns
+    summary_table = summary_table.select('Rank', independent_column, '#Obs', '#Bads', 'Default_Rate', 'Perc_Bads', 'Perc_Obs')
+    
+    # Define a window specification for cumulative sums
+    window_spec = Window.orderBy('Rank')
+
+    # Calculate cumulative sums
+    summary_table = summary_table.withColumn('Cum_Perc_Obs', F.sum('Perc_Obs').over(window_spec)) \
+                                   .withColumn('Cum_Perc_Bads', F.sum('Perc_Bads').over(window_spec)) 
+
+    # Add lagged values for Cum_Perc_Bads and Cum_Perc_Obs
+    summary_table = summary_table.withColumn('Prev_Cum_Perc_Obs', F.lag('Cum_Perc_Obs').over(window_spec)) \
+                                   .withColumn('Prev_Cum_Perc_Bads', F.lag('Cum_Perc_Bads').over(window_spec)) 
+
+    # Replace null values in the first row with 0 for lagged columns
+    summary_table = summary_table.withColumn(
+        'Prev_Cum_Perc_Bads',
+        F.when(F.col('Prev_Cum_Perc_Bads').isNull(), 0).otherwise(F.col('Prev_Cum_Perc_Bads'))
+    ).withColumn(
+        'Prev_Cum_Perc_Obs',
+        F.when(F.col('Prev_Cum_Perc_Obs').isNull(), 0).otherwise(F.col('Prev_Cum_Perc_Obs'))
+    )
+
+    # Calculate CAP using the trapezoidal formula
+    summary_table = summary_table.withColumn(
+        'CAP',
+        (summary_table['Cum_Perc_Obs'] - summary_table['Prev_Cum_Perc_Obs']) * \
+        (summary_table['Cum_Perc_Bads'] + summary_table['Prev_Cum_Perc_Bads']) * 0.5
+    )
+
+    # Calculate Numerator
+    Numerator = summary_table.agg(F.sum('CAP')).first()[0] - 0.5
+
+    # Calculate Denominator 
+    Denominator = 0.5 * (1 - (total_bads / total_count)) 
+
+    # Calculate Accuracy Ratio
+    AR = Numerator / Denominator if Denominator != 0 else None
+
+    # Show the results for total bads and total observations
+    print(f"Total Bads: {total_bads}, Total Obs: {total_count}")
+    print(f"Numerator: {Numerator}, Denominator: {Denominator}")
+    print(f"Accuracy Ratio: {AR}")
+    
+    return summary_table
+# Call the function
+summary_table = calculate_accuracy_ratio(df, 'D2_E_Bad', 'Credit_Utilization')
+
+# Show the summary table
+summary_table.display()
