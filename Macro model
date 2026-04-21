@@ -1,0 +1,1076 @@
+# Data transformation
+# SQRT 
+data['sqrt_GDP'] = np.sqrt(data['GDP'])
+data['sqrt_GDPGR'] = np.sqrt(data['GDPGR'])
+data['sqrt_UNEMP_RATE'] = np.sqrt(data['UNEMP_RATE'])
+data['sqrt_CPI'] = np.sqrt(data['CPI'])
+data['sqrt_AVG_MONTHLY_WAGE'] = np.sqrt(data['AVG_MONTHLY_WAGE'])
+data['sqrt_FII'] = np.sqrt(data['FII'])
+data['sqrt_MLR'] = np.sqrt(data['MLR'])
+data['sqrt_PVT_CONSUMPTION'] = np.sqrt(data['PVT_CONSUMPTION'])
+data['sqrt_THAI_GDP'] = np.sqrt(data['THAI_GDP'])
+data['sqrt_MV_SALES'] = np.sqrt(data['MV_SALES'])
+
+# lOG
+data['log_GDP'] = np.log(data['GDP'])
+data['log_GDPGR'] = np.log(data['GDPGR'])
+data['log_UNEMP_RATE'] = np.log(data['UNEMP_RATE'])
+data['log_CPI'] = np.log(data['CPI'])
+data['log_AVG_MONTHLY_WAGE'] = np.log(data['AVG_MONTHLY_WAGE'])
+data['log_FII'] = np.log(data['FII'])
+data['log_MLR'] = np.log(data['MLR'])
+data['log_PVT_CONSUMPTION'] = np.log(data['PVT_CONSUMPTION'])
+data['log_THAI_GDP'] = np.log(data['THAI_GDP'])
+data['log_MV_SALES'] = np.log(data['MV_SALES'])
+
+
+# % CHANGE QoQ%
+data['q_pct_change_GDP'] = data['GDP'].pct_change()
+data['q_pct_change_GDPGR'] = data['GDPGR'].pct_change()
+data['q_pct_change_UNEMP_RATE'] = data['UNEMP_RATE'].pct_change()
+data['q_pct_change_CPI'] = data['CPI'].pct_change()
+data['q_pct_change_AVG_MONTHLY_WAGE'] = data['AVG_MONTHLY_WAGE'].pct_change()
+data['q_pct_change_FII'] = data['FII'].pct_change()
+data['q_pct_change_MLR'] = data['MLR'].pct_change()
+data['q_pct_change_PVT_CONSUMPTION'] = data['PVT_CONSUMPTION'].pct_change()
+data['q_pct_change_THAI_GDP'] = data['THAI_GDP'].pct_change()
+data['q_pct_change_MV_SALES'] = data['MV_SALES'].pct_change()
+
+# % CHANGE YoY%
+data['pct_change_GDP'] = data['GDP'].pct_change(periods=4)
+data['pct_change_GDPGR'] = data['GDPGR'].pct_change(periods=4)
+data['pct_change_UNEMP_RATE'] = data['UNEMP_RATE'].pct_change(periods=4)
+data['pct_change_CPI'] = data['CPI'].pct_change(periods=4)
+data['pct_change_AVG_MONTHLY_WAGE'] = data['AVG_MONTHLY_WAGE'].pct_change(periods=4)
+data['pct_change_FII'] = data['FII'].pct_change(periods=4)
+data['pct_change_MLR'] = data['MLR'].pct_change(periods=4)
+data['pct_change_PVT_CONSUMPTION'] = data['PVT_CONSUMPTION'].pct_change(periods=4)
+data['pct_change_THAI_GDP'] = data['THAI_GDP'].pct_change(periods=4)
+data['pct_change_MV_SALES'] = data['MV_SALES'].pct_change(periods=4)
+
+# lOG DIFF
+data['log_diff_GDP'] = np.log(data['GDP']) - np.log(data['GDP'].shift(1))
+data['log_diff_GDPGR'] = np.log(data['GDPGR']) - np.log(data['GDPGR'].shift(1))
+data['log_diff_UNEMP_RATE'] = np.log(data['UNEMP_RATE']) - np.log(data['UNEMP_RATE']).shift(1))
+data['log_diff_CPI'] = np.log(data['CPI']) - np.log(data['CPI'].shift(1))
+data['log_diff_AVG_MONTHLY_WAGE'] = np.log(data['AVG_MONTHLY_WAGE']) - np.log(data['AVG_MONTHLY_WAGE'].shift(1))
+data['log_diff_FII'] = np.log(data['FII']) - np.log(data['FII'].shift(1))
+data['log_diff_MLR'] = np.log(data['MLR']) - np.log(data['MLR'].shift(1))
+data['log_diff_PVT_CONSUMPTION'] = np.log(data['PVT_CONSUMPTION']) - np.log(data['PVT_CONSUMPTION'].shift(1))
+data['log_diff_THAI_GDP'] = np.log(data['THAI_GDP']) - np.log(data['THAI_GDP'].shift(1))
+data['log_diff_MV_SALES'] = np.log(data['MV_SALES']) - np.log(data['MV_SALES'].shift(1))
+
+# 2 MONTH MOVING AVERAGE
+data['MA_2mnth_GDP'] = data['GDP'].rolling(window=2).mean()
+data['MA_2mnth_GDPGR'] = data['GDPGR'].rolling(window=2).mean()
+data['MA_2mnth_UNEMP_RATE'] = data['UNEMP_RATE'].rolling(window=2).mean()
+data['MA_2mnth_CPI'] = data['CPI'].rolling(window=2).mean()
+data['MA_2mnth_AVG_MONTHLY_WAGE'] = data['AVG_MONTHLY_WAGE'].rolling(window=2).mean()
+data['MA_2mnth_FII'] = data['FII'].rolling(window=2).mean()
+data['MA_2mnth_MLR'] = data['MLR'].rolling(window=2).mean()
+data['MA_2mnth_PVT_CONSUMPTION'] = data['PVT_CONSUMPTION'].rolling(window=2).mean()
+data['MA_2mnth_THAI_GDP'] = data['THAI_GDP'].rolling(window=2).mean()
+data['MA_2mnth_MV_SALES'] = data['MV_SALES'].rolling(window=2).mean()
+
+# 3 MONTH MOVING AVERAGE
+data['MA_3mnth_GDP'] = data['GDP'].rolling(window=3).mean()
+data['MA_3mnth_GDPGR'] = data['GDPGR'].rolling(window=3).mean()
+data['MA_3mnth_UNEMP_RATE'] = data['UNEMP_RATE'].rolling(window=3).mean()
+data['MA_3mnth_CPI'] = data['CPI'].rolling(window=3).mean()
+data['MA_3mnth_AVG_MONTHLY_WAGE'] = data['AVG_MONTHLY_WAGE'].rolling(window=3).mean()
+data['MA_3mnth_FII'] = data['FII'].rolling(window=3).mean()
+data['MA_3mnth_MLR'] = data['MLR'].rolling(window=3).mean()
+data['MA_3mnth_PVT_CONSUMPTION'] = data['PVT_CONSUMPTION'].rolling(window=3).mean()
+data['MA_3mnth_THAI_GDP'] = data['THAI_GDP'].rolling(window=3).mean()
+data['MA_3mnth_MV_SALES'] = data['MV_SALES'].rolling(window=3).mean()
+
+
+# 4 MONTH MOVING AVERAGE
+data['MA_4mnth_GDP'] = data['GDP'].rolling(window=4).mean()
+data['MA_4mnth_GDPGR'] = data['GDPGR'].rolling(window=4).mean()
+data['MA_4mnth_UNEMP_RATE'] = data['UNEMP_RATE'].rolling(window=4).mean()
+data['MA_4mnth_CPI'] = data['CPI'].rolling(window=4).mean()
+data['MA_4mnth_AVG_MONTHLY_WAGE'] = data['AVG_MONTHLY_WAGE'].rolling(window=4).mean()
+data['MA_4mnth_FII'] = data['FII'].rolling(window=4).mean()
+data['MA_4mnth_MLR'] = data['MLR'].rolling(window=4).mean()
+data['MA_4mnth_PVT_CONSUMPTION'] = data['PVT_CONSUMPTION'].rolling(window=4).mean()
+data['MA_4mnth_THAI_GDP'] = data['THAI_GDP'].rolling(window=4).mean()
+data['MA_4mnth_MV_SALES'] = data['MV_SALES'].rolling(window=4).mean()
+
+
+
+#lags and Leads
+exclude_cols = ['Date', 'Economy_State_dummy']
+variables_to_lag_lead = [col for col in data.columns if col not in exclude_cols]
+
+# Create lag and lead variables (correctly using f-strings inside the loop)
+for var in variables_to_lag_lead:
+    data[f'{var}_lag1']  = data[var].shift(1)
+    data[f'{var}_lag2']  = data[var].shift(2)
+    data[f'{var}_lag3']  = data[var].shift(3)
+    data[f'{var}_lag4']  = data[var].shift(4)
+    data[f'{var}_lead1'] = data[var].shift(-1)
+    data[f'{var}_lead2'] = data[var].shift(-2)
+    data[f'{var}_lead3'] = data[var].shift(-3)
+    data[f'{var}_lead4'] = data[var].shift(-4)
+
+# Now safely extract just the lag and lead columns (if needed)
+lag1_cols =  [f'{col}_lag1'  for col in variables_to_lag_lead]
+lag2_cols =  [f'{col}_lag2'  for col in variables_to_lag_lead]
+lag3_cols =  [f'{col}_lag3'  for col in variables_to_lag_lead]
+lag4_cols =  [f'{col}_lag4'  for col in variables_to_lag_lead]
+
+lead1_cols = [f'{col}_lead1' for col in variables_to_lag_lead]
+lead2_cols = [f'{col}_lead2' for col in variables_to_lag_lead]
+lead3_cols = [f'{col}_lead3' for col in variables_to_lag_lead]
+lead4_cols = [f'{col}_lead4' for col in variables_to_lag_lead]
+
+# Optional separate lag/lead datasets
+data_lags1  = data[['Date', 'Economy_State_dummy'] + lag1_cols]
+data_lags2  = data[['Date', 'Economy_State_dummy'] + lag2_cols]
+data_lags3  = data[['Date', 'Economy_State_dummy'] + lag3_cols]
+data_lags4  = data[['Date', 'Economy_State_dummy'] + lag4_cols]
+data_leads1 = data[['Date', 'Economy_State_dummy'] + lead1_cols]
+data_leads2 = data[['Date', 'Economy_State_dummy'] + lead2_cols]
+data_leads3 = data[['Date', 'Economy_State_dummy'] + lead3_cols]
+data_leads4 = data[['Date', 'Economy_State_dummy'] + lead4_cols]
+
+data =        data[['Date', 'Economy_State_dummy'] + variables_to_lag_lead]
+
+# Display preview
+print("Lagged Data:")
+print(data_lags1.head())
+print(data_lags2.head())
+print(data_lags3.head())
+print(data_lags4.head())
+
+print("\nLead Data:")
+print(data_leads1.head())
+print(data_leads2.head())
+print(data_leads3.head())
+print(data_leads4.head())
+
+
+#data
+#data_lags1  
+#data_lags2
+#data_lags3
+#data_lags4
+#data_leads1
+#data_leads2
+#data_leads3
+#data_leads4 
+
+all_independent_variables_df = pd.concat([data.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_lags1.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_lags2.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_lags3.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_lags4.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_leads1.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_leads2.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_leads3.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_leads4.drop(columns = ['Date','Economy_State_dummy']),
+                                         ], axis = 1) 
+
+all_variables_df =                        pd.concat([data,
+                                          data_lags1.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_lags2.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_lags3.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_lags4.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_leads1.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_leads2.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_leads3.drop(columns = ['Date','Economy_State_dummy']),
+                                          data_leads4.drop(columns = ['Date','Economy_State_dummy']),
+                                         ], axis = 1) 
+
+
+correlation_matrix = all_independent_variables_df.corr()
+print(correlation_matrix)
+
+#OLM
+#Function for One Variable at a time
+
+import pandas as pd
+import statsmodels.api as sm
+from statsmodels.miscmodels.ordinal_model import OrderedModel
+
+def fit_ordered_logit_models(data, target='Economy_State_dummy'):
+    # Ensure the dependent variable is categorical and ordered
+    ordered_categories = ['Poor', 'Normal', 'Good']
+    data[target] = pd.Categorical(data[target], categories=ordered_categories, ordered=True)
+
+    results_list = []
+    exclude_cols = ['Date', target]
+    independent_vars = [col for col in data.columns if col not in exclude_cols]
+
+    for var in independent_vars:
+        try:
+            sub_data = data[[target, var]].dropna()
+            y = sub_data[target]
+            X = sub_data[[var]]
+
+            # Fit Ordered Logit model
+            model = OrderedModel(y, X, distr='logit')
+            res = model.fit(method='lbfgs', disp=False)
+
+            # Get coefficients (including thresholds)
+            for param_name, coef in res.params.items():
+                results_list.append({
+                    'Independent_Var': var,
+                    'Coefficient': param_name,
+                    'Beta': coef,
+                    'P-Value': res.pvalues[param_name],
+                    'T-Stat': res.tvalues[param_name],
+                    'Pseudo_R2': res.prsquared if hasattr(res, 'prsquared') else None,
+                    'AIC': res.aic,
+                    'BIC': res.bic,
+                    "Log-Likelihood" : res.llf,
+                    "Nobs": res.nobs
+                })
+
+        except Exception as e:
+            print(f"Model failed for variable {var}: {e}")
+
+    return pd.DataFrame(results_list)
+
+results_df = fit_ordered_logit_models(all_variables_df, target='Economy_State_dummy')
+print(results_df)
+
+# Convert DataFrame to CSV string
+csv_data = results_df.to_csv(index=False)
+
+
+# Create a download link for the CSV file
+from IPython.display import HTML
+
+def create_download_link(data, filename="data.csv"):
+    # Data has to be URI encoded for the href
+    import urllib
+    csv_uri = "data:text/csv;charset=utf-8," + urllib.parse.quote(data)
+    return HTML(f'<a download="{filename}" href="{csv_uri}">Download CSV file</a>')
+
+create_download_link(csv_data)
+
+
+
+#
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+from statsmodels.miscmodels.ordinal_model import OrderedModel
+from scipy.stats import chi2, norm
+
+def test_proportional_odds_assumption_2(df, dependent_var='Economy_State_dummy', date_var='Date'):
+    # Drop Date column if present
+    df = df.drop(columns=[date_var], errors='ignore')
+
+    # Ensure dependent variable is ordered categorical
+    df[dependent_var] = pd.Categorical(df[dependent_var], ordered=True)
+
+    results = []
+    predictors = [col for col in df.columns if col != dependent_var]
+
+    for var in predictors:
+        try:
+            # Subset and drop NA
+            temp_df = df[[dependent_var, var]].dropna()
+            y_ord = temp_df[dependent_var]
+            X = temp_df[[var]]
+
+            # Proportional odds model
+            model_po = OrderedModel(y_ord, X, distr='logit')
+            res_po = model_po.fit(method='bfgs', disp=False)
+
+            # Generalized logit across thresholds
+            thresholds = y_ord.cat.categories
+            betas = []
+            ses = []
+            for i in range(len(thresholds)-1):
+                y_binary = (y_ord.cat.codes <= i).astype(int)
+                logit_model = sm.Logit(y_binary, sm.add_constant(X)).fit(disp=False)
+                betas.append(logit_model.params[var])
+                ses.append(logit_model.bse[var])
+
+            # Wald-style Brant test
+            if len(betas) >= 2:
+                z_stat = (betas[0] - betas[1]) / np.sqrt(ses[0]**2 + ses[1]**2)
+                brant_p = 2 * (1 - norm.cdf(abs(z_stat)))
+            else:
+                z_stat = None
+                brant_p = None
+
+            # LRT
+            ll_po = res_po.llf
+            ll_unconstrained = sum(
+                sm.Logit((y_ord.cat.codes <= i).astype(int),
+                         sm.add_constant(X)).fit(disp=False).llf
+                for i in range(len(thresholds) - 1)
+            )
+            lr_stat = 2 * (ll_unconstrained - ll_po)
+            df_diff = len(thresholds) - 2
+            p_value = chi2.sf(lr_stat, df_diff)
+
+            # Inference
+            po_inference = 'Assumption Holds' if p_value > 0.05 else 'Violated'
+            brant_inference = 'Assumption Holds' if brant_p is None or brant_p > 0.05 else 'Violated'
+
+            results.append({
+                'Variable': var,
+                'PO_beta': round(res_po.params[var], 4),
+                'Beta_1': round(betas[0], 4) if len(betas) > 0 else None,
+                'Beta_2': round(betas[1], 4) if len(betas) > 1 else None,
+                'Beta_range': round(max(betas) - min(betas), 4) if len(betas) > 1 else None,
+                'LRT_statistic': round(lr_stat, 4),
+                'LRT_p_value': round(p_value, 4),
+                'LRT_inference': po_inference,
+                'Brant_z': round(z_stat, 4) if z_stat is not None else None,
+                'Brant_p_value': round(brant_p, 4) if brant_p is not None else None,
+                'Brant_inference': brant_inference
+            })
+
+        except Exception as e:
+            results.append({
+                'Variable': var,
+                'PO_beta': None,
+                'Beta_1': None,
+                'Beta_2': None,
+                'Beta_range': None,
+                'LRT_statistic': None,
+                'LRT_p_value': None,
+                'LRT_inference': f'Error: {str(e)}',
+                'Brant_z': None,
+                'Brant_p_value': None,
+                'Brant_inference': None
+            })
+
+    return pd.DataFrame(results)
+
+result_df = test_proportional_odds_assumption_2(all_variables_df)
+print(result_df)
+
+# Convert DataFrame to CSV string
+csv_data = result_df.to_csv(index=False)
+
+
+# Create a download link for the CSV file
+from IPython.display import HTML
+
+def create_download_link(data, filename="data.csv"):
+    # Data has to be URI encoded for the href
+    import urllib
+    csv_uri = "data:text/csv;charset=utf-8," + urllib.parse.quote(data)
+    return HTML(f'<a download="{filename}" href="{csv_uri}">Download CSV file</a>')
+
+create_download_link(csv_data)
+
+# Shortlisted columns
+import pandas as pd
+# Assuming your full DataFrame is named df
+columns_to_subset = [
+    'Economy_State_dummy',
+    'log_MLR_lead4',
+    'UNEMP_RATE_lead2',
+    'pct_change_GDP_lag1',
+    'MA_3mnth_GDPGR_lag1',
+    'MA_3mnth_THAI_GDP_lead2',
+    'log_diff_PVT_CONSUMPTION_lead4',
+    'pct_change_AVG_MONTHLY_WAGE_lead1'
+]
+# Subset the DataFrame
+df_subset = all_variables_df[columns_to_subset]
+# Check the first few rows
+print(df_subset.head())
+df_subset.columns
+correlation_matrix = df_subset.corr()
+print(correlation_matrix)
+# Convert DataFrame to CSV string
+csv_data = correlation_matrix.to_csv(index=False)
+
+# Create a download link for the CSV file
+from IPython.display import HTML
+
+def create_download_link(data, filename="data.csv"):
+    # Data has to be URI encoded for the href
+    import urllib
+    csv_uri = "data:text/csv;charset=utf-8," + urllib.parse.quote(data)
+    return HTML(f'<a download="{filename}" href="{csv_uri}">Download CSV file</a>')
+create_download_link(csv_data)
+
+
+
+
+#OLM using all combinations of shorlisted columns
+import pandas as pd
+import statsmodels.api as sm
+from statsmodels.miscmodels.ordinal_model import OrderedModel
+from itertools import combinations
+
+def fit_all_combinations_ordered_logit_models(data, target='Economy_State_dummy'):
+    ordered_categories = ['Poor', 'Normal', 'Good']
+    data[target] = pd.Categorical(data[target], categories=ordered_categories, ordered=True)
+
+    results_list = []
+    exclude_cols = ['Date', target]
+    independent_vars = [col for col in data.columns if col not in exclude_cols]
+
+    # Iterate over all combinations (1 to len independent_vars)
+    for k in range(1, len(independent_vars)+1):
+        for var_combo in combinations(independent_vars, k):
+            try:
+                sub_data = data[[target] + list(var_combo)].dropna()
+                y = sub_data[target]
+                X = sub_data[list(var_combo)]
+
+                # Fit Ordered Logit model
+                model = OrderedModel(y, X, distr='logit')
+                res = model.fit(method='lbfgs', disp=False)
+
+                # Record results for each coefficient
+                for param_name, coef in res.params.items():
+                    results_list.append({
+                        'Variables': ', '.join(var_combo),
+                        'Coefficient': param_name,
+                        'Beta': coef,
+                        'P-Value': res.pvalues[param_name],
+                        'T-Stat': res.tvalues[param_name],
+                        'Pseudo_R2': res.prsquared if hasattr(res, 'prsquared') else None,
+                        'AIC': res.aic,
+                        'BIC': res.bic,
+                        'Log-Likelihood': res.llf,
+                        'Nobs': res.nobs
+                    })
+
+            except Exception as e:
+                print(f"Model failed for variables {var_combo}: {e}")
+                results_list.append({
+                    'Variables': ', '.join(var_combo),
+                    'Coefficient': 'Error',
+                    'Beta': None,
+                    'P-Value': None,
+                    'T-Stat': None,
+                    'Pseudo_R2': None,
+                    'AIC': None,
+                    'BIC': None,
+                    'Log-Likelihood': None,
+                    'Nobs': data[[target] + list(var_combo)].dropna().shape[0],
+                    'Error': str(e)
+                })
+
+    return pd.DataFrame(results_list)
+
+results_df = fit_all_combinations_ordered_logit_models(df_subset, target='Economy_State_dummy')
+results_df.head()
+results_df
+# Convert DataFrame to CSV string
+csv_data = results_df.to_csv(index=False)
+
+# Create a download link for the CSV file
+from IPython.display import HTML
+
+def create_download_link(data, filename="data.csv"):
+    # Data has to be URI encoded for the href
+    import urllib
+    csv_uri = "data:text/csv;charset=utf-8," + urllib.parse.quote(data)
+    return HTML(f'<a download="{filename}" href="{csv_uri}">Download CSV file</a>')
+
+create_download_link(csv_data)
+
+
+
+
+# OLM with one or more variables
+df = all_variables_df[['Date','Economy_State_dummy','UNEMP_RATE_lead2','pct_change_GDP_lag1', 'pct_change_AVG_MONTHLY_WAGE_lead1']].dropna()
+
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+import statsmodels.api as sm
+from statsmodels.miscmodels.ordinal_model import OrderedModel
+
+# Ensure y is properly ordered categorical
+df['Economy_State_dummy'] = pd.Categorical(
+    df['Economy_State_dummy'],
+    categories=['Poor', 'Normal', 'Good'],  # ordered low to high
+    ordered=True
+)
+
+# Select predictors
+X = df[['UNEMP_RATE_lead2','pct_change_GDP_lag1', 'pct_change_AVG_MONTHLY_WAGE_lead1']].copy()
+
+# Standardize predictors (mean=0, std=1)
+scaler = StandardScaler()
+X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns, index=X.index)
+
+# Target variable
+y = df['Economy_State_dummy']
+
+# Fit Ordered Logit model with standardized predictors
+model = OrderedModel(endog=y, exog=X_scaled, distr='logit')
+res = model.fit(method='lbfgs', disp=True)
+
+# View results
+print(res.summary())
+betas = res.params[model.exog_names]  
+thresholds = res.params.drop(model.exog_names) 
+
+print(betas)
+print(thresholds)
+print(model.distr)
+print(model.cdf)
+X.corr()
+
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+import pandas as pd
+
+# Use the standardized predictors dataframe X_scaled (no constant column added)
+X = X_scaled.copy()
+
+# Calculate VIF for each variable
+vif_data = pd.DataFrame()
+vif_data['feature'] = X.columns
+vif_data['VIF'] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+
+print(vif_data)
+
+
+
+
+### Accuracy check
+import numpy as np
+from sklearn.metrics import classification_report, confusion_matrix, precision_score, recall_score, f1_score
+from scipy.stats import kendalltau
+
+# 1. Accuracy ratio
+predicted_probs = res.model.predict(res.params, exog=X_scaled)  # use scaled X here to match model input
+predicted_categories = predicted_probs.argmax(axis=1)
+true_categories = y.cat.codes.values
+
+accuracy = (predicted_categories == true_categories).mean()
+print(f"Accuracy ratio (overall accuracy): {accuracy:.4f}")
+
+# 2. Confusion matrix
+cm = confusion_matrix(true_categories, predicted_categories)
+print("\nConfusion Matrix:")
+print(cm)
+
+# 3. Weighted accuracy
+distance = np.abs(predicted_categories - true_categories)
+weighted_accuracy = 1 - (distance / (len(y.cat.categories) - 1)).mean()
+print(f"\nWeighted accuracy (penalizes distant misclassifications): {weighted_accuracy:.4f}")
+
+# 4. Kendall’s Tau-b
+tau_b, p_value = kendalltau(predicted_categories, true_categories)
+print(f"\nKendall's Tau-b: {tau_b:.4f} (p-value: {p_value:.4g})")
+
+# 5. Precision, Recall, F1 Score
+
+# Per-class metrics
+precision_per_class = precision_score(true_categories, predicted_categories, average=None)
+recall_per_class = recall_score(true_categories, predicted_categories, average=None)
+f1_per_class = f1_score(true_categories, predicted_categories, average=None)
+
+print("\nPrecision per class:", np.round(precision_per_class, 4))
+print("Recall per class:", np.round(recall_per_class, 4))
+print("F1 Score per class:", np.round(f1_per_class, 4))
+
+# Macro-averaged metrics
+precision_macro = precision_score(true_categories, predicted_categories, average='macro')
+recall_macro = recall_score(true_categories, predicted_categories, average='macro')
+f1_macro = f1_score(true_categories, predicted_categories, average='macro')
+
+print(f"\nMacro Precision: {precision_macro:.4f}")
+print(f"Macro Recall:    {recall_macro:.4f}")
+print(f"Macro F1 Score:  {f1_macro:.4f}")
+
+# Weighted-averaged metrics
+precision_weighted = precision_score(true_categories, predicted_categories, average='weighted')
+recall_weighted = recall_score(true_categories, predicted_categories, average='weighted')
+f1_weighted = f1_score(true_categories, predicted_categories, average='weighted')
+
+print(f"\nWeighted Precision: {precision_weighted:.4f}")
+print(f"Weighted Recall:    {recall_weighted:.4f}")
+print(f"Weighted F1 Score:  {f1_weighted:.4f}")
+
+
+'''
+# 6. Somers' D
+# Somers' D is closely related to concordance (C) and measures association for ordinal data
+# Compute predicted "scores" as expected value of outcome categories
+expected_scores = np.dot(predicted_probs, np.arange(len(y.cat.categories)))
+
+# Calculate Somers' D using the formula: D = 2(C) - 1,
+# where C is the concordance index between expected_scores and true categories
+# Here we approximate C by concordance (similar to AUC) using Kendall tau
+tau, _ = kendalltau(expected_scores, true_categories)
+somers_d = 2 * tau - 1
+print(f"Somers' D: {somers_d:.4f} (range: -1 to 1, higher is better)")
+'''
+
+
+predicted_categories
+Pred_cat = pd.DataFrame(predicted_categories)
+print(Pred_cat)
+predicted_probs
+
+
+
+
+### test the proportional odds assumption simultaneously for all predictors in a multivariate setting
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+import statsmodels.api as sm
+from statsmodels.miscmodels.ordinal_model import OrderedModel
+from scipy.stats import chi2
+
+def test_proportional_odds_multivariate(df, dependent_var='Economy_State_dummy'):
+    # Drop missing data
+    df = df.dropna()
+    if 'Date' in df.columns:
+        df = df.drop(columns=['Date'])
+
+    # Ensure dependent variable is ordered categorical
+    df[dependent_var] = pd.Categorical(df[dependent_var], ordered=True)
+
+    # Separate predictors and target
+    y_ord = df[dependent_var]
+    X = df.drop(columns=[dependent_var])
+
+    # Standardize predictors
+    scaler = StandardScaler()
+    X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns, index=X.index)
+
+    # Add constant for binary logits
+    X_const = sm.add_constant(X_scaled)
+
+    # Fit proportional odds model with scaled predictors
+    model_po = OrderedModel(y_ord, X_scaled, distr='logit')
+    res_po = model_po.fit(method='bfgs', disp=False)
+
+    thresholds = y_ord.cat.categories
+    ll_unconstrained = 0
+    n_params_unconstrained = 0
+
+    # Fit separate binary logits for each threshold with scaled predictors
+    for i in range(len(thresholds) - 1):
+        y_binary = (y_ord.cat.codes <= i).astype(int)
+        logit_model = sm.Logit(y_binary, X_const).fit(disp=False)
+        ll_unconstrained += logit_model.llf
+        n_params_unconstrained += logit_model.df_model + 1  # intercept
+
+    # Likelihood Ratio Test
+    ll_po = res_po.llf
+    n_params_po = len(res_po.params)
+
+    lr_stat = 2 * (ll_unconstrained - ll_po)
+    df_diff = n_params_unconstrained - n_params_po
+    p_value = chi2.sf(lr_stat, df_diff)
+
+    results = {
+        'PO_loglikelihood': ll_po,
+        'Unconstrained_loglikelihood': ll_unconstrained,
+        'LR_statistic': lr_stat,
+        'df_diff': df_diff,
+        'p_value': p_value,
+        'Inference': 'Proportional Odds Assumption Holds' if p_value > 0.05 else 'Proportional Odds Assumption Violated'
+    }
+
+    return results
+
+res = test_proportional_odds_multivariate(df, dependent_var='Economy_State_dummy')
+print(res)
+
+
+
+
+
+### taking outputs
+# The categories are in your original y variable:
+categories = y.cat.categories.tolist()  # ['Poor', 'Normal', 'Good']
+
+# Get predicted probabilities (NumPy array)
+predicted_probs = res.model.predict(res.params, exog=X_scaled)
+
+# Convert to DataFrame with category columns
+predicted_probs_df = pd.DataFrame(
+    predicted_probs,
+    columns=categories,
+    index=X_scaled.index
+)
+
+# Get predicted category with max probability
+predicted_categories = predicted_probs_df.idxmax(axis=1)
+
+# Add predicted categories to your original dataframe copy
+df_with_predictions = df.copy()
+df_with_predictions['Predicted_Economy_State'] = predicted_categories
+
+# Add scaled predictor variables as new columns
+for col in X_scaled.columns:
+    df_with_predictions[f"{col}_scaled"] = X_scaled[col]
+
+# Optional: make sure it’s categorical with correct order
+df_with_predictions['Predicted_Economy_State'] = pd.Categorical(
+    df_with_predictions['Predicted_Economy_State'],
+    categories=categories,
+    ordered=True
+)
+
+print(df_with_predictions.head(10))
+predicted_probs_df
+
+# Convert DataFrame to CSV string
+csv_data = predicted_probs_df.to_csv(index=False)
+
+# Create a download link for the CSV file
+from IPython.display import HTML
+
+def create_download_link(data, filename="data.csv"):
+    # Data has to be URI encoded for the href
+    import urllib
+    csv_uri = "data:text/csv;charset=utf-8," + urllib.parse.quote(data)
+    return HTML(f'<a download="{filename}" href="{csv_uri}">Download CSV file</a>')
+
+create_download_link(csv_data)
+
+
+# Convert DataFrame to CSV string
+csv_data = df_with_predictions.to_csv(index=False)
+
+# Create a download link for the CSV file
+from IPython.display import HTML
+
+def create_download_link(data, filename="data.csv"):
+    # Data has to be URI encoded for the href
+    import urllib
+    csv_uri = "data:text/csv;charset=utf-8," + urllib.parse.quote(data)
+    return HTML(f'<a download="{filename}" href="{csv_uri}">Download CSV file</a>')
+
+create_download_link(csv_data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Manual Predictions
+# Assuming you already have:
+# - df: your original dataframe with variables
+# - X_scaled: standardized predictors DataFrame
+# - model, res: your fitted OrderedModel and results
+# - predicted_categories: model predicted categories (from idxmax on predicted probs)
+# - categories: ordered categories list, e.g. ['Poor', 'Normal', 'Good']
+
+# 1. Identify threshold parameters in model parameters
+thresholds = ['Poor/Normal', 'Normal/Good']
+
+# 2. Extract only predictor names (exclude thresholds)
+predictor_names = [name for name in model.exog_names if name not in thresholds]
+
+# 3. Extract beta coefficients for predictors only
+beta = res.params[predictor_names]
+
+# 4. Check alignment of columns and beta index
+assert all(X_scaled.columns == beta.index), "Mismatch between X_scaled columns and beta index"
+
+# 5. Compute latent variable (X_scaled @ beta)
+latent_scores = X_scaled @ beta
+
+# 6. Extract threshold cutoffs
+cut1 = res.params['Poor/Normal']
+cut2 = res.params['Normal/Good']
+
+# 7. Assign categories manually based on latent scores and cutoffs
+manual_pred = pd.cut(
+    latent_scores,
+    bins=[-np.inf, cut1, cut2, np.inf],
+    labels=categories,
+    ordered=True
+)
+
+# 8. Prepare comparison dataframe
+df_with_predictions = df.copy()
+df_with_predictions['Predicted_Economy_State_Model'] = predicted_categories
+df_with_predictions['Predicted_Economy_State_Manual'] = manual_pred
+
+# Optional: Add scaled variables columns for reference
+for col in X_scaled.columns:
+    df_with_predictions[f"{col}_scaled"] = X_scaled[col]
+
+# 9. (Optional) Check accuracy of manual vs model predictions
+accuracy = (predicted_categories == manual_pred).mean()
+print(f"Manual predictions match model predictions with accuracy: {accuracy:.4%}")
+
+# 10. View the first few rows
+print(df_with_predictions.head(10))
+
+print(f"Length of X_scaled.columns: {len(X_scaled.columns)}")
+print(f"Length of beta.index: {len(beta.index)}")
+print(f"X_scaled.columns: {list(X_scaled.columns)}")
+print(f"beta.index: {list(beta.index)}")
+
+print(f"exog_names: {model.exog_names}")
+beta
+
+# Convert DataFrame to CSV string
+csv_data = df_with_predictions.to_csv(index=False)
+
+# Create a download link for the CSV file
+from IPython.display import HTML
+
+def create_download_link(data, filename="data.csv"):
+    # Data has to be URI encoded for the href
+    import urllib
+    csv_uri = "data:text/csv;charset=utf-8," + urllib.parse.quote(data)
+    return HTML(f'<a download="{filename}" href="{csv_uri}">Download CSV file</a>')
+
+create_download_link(csv_data)
+
+from scipy.special import expit
+# Example row of X_scaled (already standardized predictors)
+x_vec = X_scaled.iloc[0].values  # or any observation
+
+# Calculate eta:
+eta = np.dot(x_vec, beta)
+
+# Calculate cumulative probabilities:
+F_cut1 = expit(cut1 - eta)
+F_cut2 = expit(cut2 - eta)
+
+# Calculate category probabilities:
+p_poor = F_cut1
+p_normal = F_cut2 - F_cut1
+p_good = 1 - F_cut2
+
+print(f"Poor: {p_poor:.4f}, Normal: {p_normal:.4f}, Good: {p_good:.4f}")
+
+# Compare these with res.model.predict(res.params, exog=[x_vec])
+
+x_vec
+beta
+X_scaled
+X_scaled['eta'] = X_scaled@beta
+X_scaled
+res.params[:-2]
+
+from scipy.special import expit  # logistic sigmoid function
+
+# linear predictor (eta)
+eta = np.dot(X_scaled, res.params[:-2])  # assuming last params are cutpoints
+
+# thresholds (cutpoints)
+cutpoints = res.params[-2:]  # example for 3 categories -> 2 thresholds
+
+# cumulative probs
+cum_prob1 = expit(cutpoints[0] - eta)  # P(Y <= Poor)
+cum_prob2 = expit(cutpoints[1] - eta)  # P(Y <= Normal)
+
+# category probabilities
+p_poor = cum_prob1
+p_normal = cum_prob2 - cum_prob1
+p_good = 1 - cum_prob2
+
+# Combine into DataFrame
+pred_probs_manual = pd.DataFrame({
+    'Poor': p_poor,
+    'Normal': p_normal,
+    'Good': p_good
+}, index=X_scaled.index)
+
+pred_probs_manual
+predicted_probs = res.predict(exog=X_scaled)
+print(predicted_probs.head())
+
+print(res.model.distr)
+print(type(res.model.distr))
+print(res.model.distr.__class__.__name__)
+
+
+categories = df['Economy_State_dummy'].cat.categories
+n_categories = len(categories)
+n_thresholds = n_categories - 1
+print("Categories:", categories)
+print("Number of categories:", n_categories)
+print("Number of thresholds:", n_thresholds)
+
+import numpy as np
+from scipy.special import expit
+
+# Use categories from your original categorical variable
+categories = df['Economy_State_dummy'].cat.categories
+n_categories = len(categories)
+n_thresholds = n_categories - 1
+
+# Split parameters accordingly
+betas = res.params[:-n_thresholds]
+cutpoints = res.params[-n_thresholds:]
+
+# Calculate linear predictor (no intercept column)
+eta = np.dot(X_scaled, betas)
+
+# Calculate cumulative probabilities
+cum_probs = [expit(cutpoint - eta) for cutpoint in cutpoints]
+
+# Compute probabilities per category
+probs = pd.DataFrame({
+    categories[0]: cum_probs[0],
+    categories[1]: cum_probs[1] - cum_probs[0],
+    categories[2]: 1 - cum_probs[1]
+}, index=X_scaled.index)
+
+print(probs.head())
+print(probs.sum(axis=1).head())  # Should be 1 for each observation
+
+# Compare to model predictions
+predicted_probs = res.predict(exog=X_scaled)
+print(predicted_probs.head())
+
+# Rename predicted probabilities columns to match manual probabilities
+predicted_probs.columns = probs.columns
+
+# Align indices
+predicted_probs = predicted_probs.reindex(probs.index)
+
+# Compute absolute differences
+diff = (probs - predicted_probs).abs()
+
+print("Max absolute difference per category:")
+print(diff.max())
+
+print(res.params)
+print(res.model.exog_names)
+print(res.model.data.param_names)
+
+print("Thresholds candidates:")
+print(res.params[-(len(df['Economy_State_dummy'].cat.categories)-1):])
+
+predicted_probs = res.predict(X_scaled, which='prob')
+print(predicted_probs.head())
+betas = res.params[:len(X_scaled.columns)]
+eta = np.dot(X_scaled, betas)
+
+
+from scipy.special import expit
+
+cutpoints = res.params[len(X_scaled.columns):]
+
+cumprobs = [expit(threshold - eta) for threshold in cutpoints]
+
+# Check if thresholds are sorted increasing:
+print("Thresholds:", cutpoints)
+print("Are thresholds sorted?", np.all(np.diff(cutpoints) > 0))
+
+# Compute category probabilities
+p_poor = cumprobs[0]
+p_normal = cumprobs[1] - cumprobs[0]
+p_good = 1 - cumprobs[1]
+
+print(df['Economy_State_dummy'].cat.categories)
+cutpoints = res.params[len(X_scaled.columns):].values  # numpy array
+cutpoints
+
+manual_pred = res.model.predict(res.params, exog=X_scaled)
+manual_pred
+print(res.predict(X_scaled, which='prob').head())
+
+
+
+
+
+
+
+
+
+
+
+# Forecasting
+future_df
+future_df['pct_change_GDP_lag1'] = future_df['GDP'].pct_change(periods=4).shift(1)
+future_df['pct_change_AVG_MONTHLY_WAGE_lead1'] = future_df['AVG_MONTHLY_WAGE'].pct_change(periods=4).shift(-1)
+future_df['UNEMP_RATE_lead2'] = future_df['UNEMP_RATE'].shift(-2)
+
+print("Means used for scaling:")
+print(scaler.mean_)
+
+print("\nStandard deviations used for scaling:")
+print(scaler.scale_)
+
+print("\n")
+for feature, mean, std in zip(X.columns, scaler.mean_, scaler.scale_):
+    print(f"{feature}: mean={mean:.4f}, std={std:.4f}")
+
+X_future = future_df[['UNEMP_RATE_lead2','pct_change_GDP_lag1','pct_change_AVG_MONTHLY_WAGE_lead1']].dropna()
+
+# Standardize the predictors using the same scaler you fitted earlier
+X_future_scaled = pd.DataFrame(scaler.transform(X_future), columns=X_future.columns, index=X_future.index)
+
+# Predict probabilities
+#predicted_probs_future = res.predict(X_future_scaled) 
+predicted_probs_future = res.model.predict(res.params, exog=X_future_scaled)
+
+# Convert to DataFrame with categories
+# The categories are in your original y variable:
+categories = y.cat.categories.tolist()  # ['Poor', 'Normal', 'Good']
+predicted_probs_future_df = pd.DataFrame(predicted_probs_future, columns=categories, index=X_future_scaled.index) #X_future
+predicted_probs_future_df
+
+
+# Get predicted categories
+predicted_categories_future = predicted_probs_future_df.idxmax(axis=1)
+predicted_categories_future
+
+# Add predictions to future_df
+future_df['Predicted_Economy_State'] = predicted_categories_future
+
+
+# Optional: make sure it’s categorical with correct order
+future_df['Predicted_Economy_State'] = pd.Categorical(
+    future_df['Predicted_Economy_State'],
+    categories=categories,
+    ordered=True
+)
+
+# Add scaled predictor variables as new columns
+for col in X_future_scaled.columns:
+    future_df[f"{col}_scaled"] = X_future_scaled[col]
+
+print(future_df)
+
+
+
+# Convert DataFrame to CSV string
+csv_data = future_df.to_csv(index=False)
+
+# Create a download link for the CSV file
+from IPython.display import HTML
+
+def create_download_link(data, filename="data.csv"):
+    # Data has to be URI encoded for the href
+    import urllib
+    csv_uri = "data:text/csv;charset=utf-8," + urllib.parse.quote(data)
+    return HTML(f'<a download="{filename}" href="{csv_uri}">Download CSV file</a>')
+
+create_download_link(csv_data)
+
+
+
+# Convert DataFrame to CSV string
+csv_data = X_future_scaled.to_csv(index=False)
+
+# Create a download link for the CSV file
+from IPython.display import HTML
+
+def create_download_link(data, filename="data.csv"):
+    # Data has to be URI encoded for the href
+    import urllib
+    csv_uri = "data:text/csv;charset=utf-8," + urllib.parse.quote(data)
+    return HTML(f'<a download="{filename}" href="{csv_uri}">Download CSV file</a>')
+
+create_download_link(csv_data)
+
